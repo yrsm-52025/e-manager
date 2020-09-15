@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>用户登录</title>
+		<link rel="stylesheet" type="text/css" href="./css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="./zui/dist/css/zui.min.css"/>
+	</head>
+	<body>
+		<div id="wrap">
+			<img src="images/logo.png"  class="logo">
+			<h1 style="text-align: center;">登录</h1>
+			<span id="to-register" class="jump">没有账号点击注册</span>
+			<div class="form">
+				<div class="form-group">
+					<label for="username" class="_label">用户名</label>
+					<span class="user_note note"></span>
+					<input type="text" class="form-control" id="username" name="username" placeholder="Username">
+				</div>
+				<div class="form-group">
+					<label for="password" class="_label">密码</label>
+					<span class="pwd_note note"></span>
+					<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+				</div>
+				<button type="submit" id="submit" class="btn btn-primary submit">登录</button>
+				<span class="login_note note" style="margin-top: -15px;"></span>
+			</div>
+		</div>
+	</body>
+	
+	<script src="./js/jquery-3.4.1.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./js/common.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $username = $("#username");
+		var $password = $("#password");
+		var $submit = $("#submit");
+		var $userNote = $(".user_note");
+		var $pwdNote = $(".pwd_note")
+		var $toRegister = $("#to-register");
+		var userflag = false;
+		var pwdflag = false;
+		var username;
+		var password;
+
+		var userInfo = {			// 用户名信息
+			"userflag":userflag,	// 用户名合理标记
+			"$username":$username,	// jQuery用户名对象
+			"$userNote":$userNote,	// jQuery用户名信息提示对象
+			"username":username,	// 用户名内容
+			"flag": "login"			// 操作标志
+		}
+		
+		// 用户名输入检查
+		$username.keyup(userInfo, checkUserName);
+
+		
+		var pwdInfo = {				// 密码信息
+			"pwdflag": pwdflag,		// 密码合理标记
+			"$password": $password,	// jQuery密码对象
+			"$pwdNote": $pwdNote,	// jQuery密码信息提示对象
+			"password": password,	// 密码内容
+			"flag": "login"			// 操作标志
+		}
+		
+		// 密码输入检查
+		$password.keyup(pwdInfo, checkPassword)
+
+		// 提交数据进行登录
+		$submit.click(() => {
+			// 点击提交时判断用户名和密码均是否合理
+			if(userInfo.userflag && pwdInfo.pwdflag) {
+				// 用户名和密码均合理后进行post请求登录
+				$.ajax({
+					type: 'post',
+					url: "login-do",
+					data: {"username":userInfo.username, "password":pwdInfo.password},
+					dataType: "JSON",
+					beforeSend() {
+						$(".login_note").css({color: "yellow"}).text('登录中...');
+					},
+					success(response) {
+						if(response.msg == "1") {
+							// 返回数据为1, 表示登录成功,延时1.5s后进行页面跳转请求
+							$(".login_note").css({color: "#CC6600"}).text('登录成功.');
+							setTimeout(function() {
+								jumpPage({"url":"userpage-to", "$note":$(".login_note")})
+							}, 1500);
+						} else {
+							// 返回数据不为1, 表示登录失败, 提示检查密码
+							$(".login_note").css({color: "#FF6666"}).text('登录失败, 请检查密码是否正确');
+						}
+					}
+				});
+			} else {
+				// 用户名或密码不合理提示进行补全
+				$(".login_note").css({color: "#CC3333"}).text('请补全以上信息');
+			}
+		})
+		
+		// 点击跳转到注册页面
+		$toRegister.click({"url":"register-to", "$note":$(".login_note")}, jumpPage);
+	</script>
+</html>

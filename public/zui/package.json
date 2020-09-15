@@ -1,0 +1,103 @@
+{
+  "_from": "zui",
+  "_id": "zui@1.9.1",
+  "_inBundle": false,
+  "_integrity": "sha1-zXOyCOox8MoLC//D80rIj4IszWI=",
+  "_location": "/zui",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "zui",
+    "name": "zui",
+    "escapedName": "zui",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npm.taobao.org/zui/download/zui-1.9.1.tgz",
+  "_shasum": "cd73b208ea31f0ca0b0bffc3f34ac88f822ccd62",
+  "_spec": "zui",
+  "_where": "C:\\Users\\伊人殇梦\\Desktop\\06任务六 Node作业\\MyNode",
+  "author": {
+    "name": "cnezsoft.com"
+  },
+  "bugs": {
+    "url": "https://github.com/easysoft/zui/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "一个基于 Bootstrap 深度定制开源前端实践方案，帮助你快速构建现代跨屏应用。",
+  "devDependencies": {
+    "colors": "^1.1.2",
+    "del": "^2.2.0",
+    "extend": "^3.0.0",
+    "gulp": "^3.9.0",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-babel": "^5.2.1",
+    "gulp-change": "^1.0.0",
+    "gulp-chmod": "^1.3.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-csscomb": "^3.0.6",
+    "gulp-cssmin": "^0.1.7",
+    "gulp-header": "^1.7.1",
+    "gulp-jsbeautifier": "^1.0.1",
+    "gulp-jsonminify": "^1.0.0",
+    "gulp-less": "^3.0.3",
+    "gulp-param": "^0.6.4",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.1",
+    "gulp-zip": "^3.0.2",
+    "http-server": "^0.9.0",
+    "less-plugin-clean-css": "^1.5.1",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.11.0",
+    "pinyin": "~2.3.3",
+    "run-sequence": "^1.1.5",
+    "string-format": "^0.5.0"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "files": [
+    "dist",
+    "assets",
+    "docs",
+    "src",
+    "gulpfile.js",
+    "index.html",
+    "CHANGES.md",
+    "README.md",
+    "zui.json",
+    "LICENSE"
+  ],
+  "homepage": "http://zui.sexy",
+  "keywords": [
+    "css",
+    "js",
+    "less",
+    "html5",
+    "responsive",
+    "front-end",
+    "framework",
+    "web"
+  ],
+  "license": "MIT",
+  "main": "index.html",
+  "name": "zui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/easysoft/zui.git"
+  },
+  "scripts": {
+    "start": "http-server -a 127.0.0.1 -p 8088",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "title": "ZUI",
+  "version": "1.9.1"
+}

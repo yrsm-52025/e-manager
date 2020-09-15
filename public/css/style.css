@@ -1,0 +1,144 @@
+*{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+#wrap {
+	width: 400px;
+	height: 600px;
+	margin: 20px auto;
+	border: 1px solid #555;
+	padding-top: 20px;
+	box-sizing: border-box;
+	position: relative;
+	overflow: hidden;
+}
+#wrap .logo {
+	display: block;
+	margin: 10px auto;
+}
+.form {
+	width: 380px;
+	max-height: 440px;
+	min-height: 300px;
+	margin: 20px auto;
+	padding: 10px 20px;
+	box-sizing: border-box;
+	border-top: 2px solid darkgray;
+	border-bottom: 2px solid darkgray;
+}
+.userList {
+	max-height: 400px;
+	overflow: auto;
+}
+.userList::-webkit-scrollbar {
+	display: none;
+}
+
+.form ._label {
+	font-size: 20px;
+	font-weight: 800;
+	display: block;
+	width: 100px;
+	float: left;
+}
+.form .note {
+	font-size: 10px;
+	float: left;
+	margin: 10px 0 0 0;
+}
+.form .submit {
+	display: block;
+	margin: 0 auto 20px;
+	width: 200px;
+}
+
+.userhead{
+	width: 50px;
+	height: 50px;
+	margin: 0;
+	float: left;
+}
+
+.jump {
+	float: right;
+	font-size: 10px;
+	margin: -10px 10px 0 0;
+	cursor: pointer;
+}
+.form .userinfo {
+	float: left;
+	width: 200px;
+	height: 30px;
+	line-height: 30px;
+	margin: 0 0 0 20px;
+	font-weight: 800;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+.form .userinfo span {
+	margin-left: 10px;
+}
+
+.mask {
+	background-color: #00000090;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	padding: 0;
+	z-index: 111;
+	display: none;
+}
+
+.mask-wrap {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.mask-content {
+	background-color: #ffffff;
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 160px;
+	right: 0;
+	margin: auto;
+	width: 300px;
+	height: 280px;
+	border-radius: 10px;
+}
+
+.mask-header {
+	height: 50px;
+	padding: 25px 20px 5px 20px;
+	border-bottom: 1px solid #E5E5E5;
+}
+.mask-title {
+	font-size: 16px;
+	float: left;
+	margin: 0;
+}
+#mask-close {
+	float: right;
+}
+
+.mask-body {
+	padding: 15px;
+}
+.mask-footer {
+	border-top: 1px solid #E5E5E5;
+	padding: 15px 60px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.mask .group label {
+	width: 100px;
+}
+.mask .note {
+	font-size: 8px;
+	color: red;
+}

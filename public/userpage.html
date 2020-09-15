@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>用户列表</title>
+		<link rel="stylesheet" type="text/css" href="./css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="./zui/dist/css/zui.min.css"/>
+	</head>
+	<body>
+		<div id="wrap">
+			<img src="images/logo.png" class="logo">
+			<h1 style="text-align: center;">登录</h1>
+			<div class="mask">
+				<div class="mask-wrap">
+					<div class="mask-content">
+						<div class="mask-header">
+							<h4 class="mask-title">操作</h4>
+							<span id="mask-close"><i class="icon icon-times"></i></span>
+						</div>
+						<div class="mask-body">
+							<div class="group">
+								<label for="changeUsername" class="input-control">用户名:</label>
+								<span class="user_note note"></span>
+								<input id="changeUsername" type="text" class="form-control" placeholder="用户名">
+							</div>
+							<div class="group" style="margin-top: 10px;">
+								<label for="changePassword" class="input-control">密码:</label>
+								<span class="pwd_note note"></span>
+								<input id="changePassword" type="text" class="form-control" placeholder="密码">
+							</div>
+						</div>
+						<div class="mask-footer">
+							<button type="button" class="btn btn-default" id="cancel">取消</button>
+							<button type="button" class="btn btn-primary" id="modify">修改</button>
+							<button type="button" class="btn btn-primary" id="delete">删除</button>
+							<span class="change-note note" style="position: absolute; bottom: 0;"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form">
+				<div class="userList"></div>
+				<ul id="userPageUl" class="pager" data-ride="pager"
+						data-rec-total="0"
+						data-rec-per-page="3"
+						data-elements="prev_icon,page_of_total_text,next_icon,items_range_text,total_text"
+						style="margin-top: -15px; height: 35px;"
+				></ul>
+			</div>
+		</div>
+	</body>
+	<script src="./js/jquery-3.4.1.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./zui/dist/js/zui.min.js"></script>
+	<script src="./zui/dist/lib/uploader/zui.uploader.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./js/common.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $edit = $(".edit");					// 获取编辑按钮对象
+		var $Ddelete = $(".delete");			// 获取删除按钮
+		var $mask = $(".mask");					// 获取遮罩层/对话框
+		var $close = $("#mask-close");			// 获取关闭遮罩层/对话框按钮
+		var $cancel = $("#cancel");				// 获取对话框中的取消按钮
+		var $modify = $("#modify");				// 获取对话框中的修改按钮
+		var $Sdelete = $("#delete");			// 获取对话框中的删除按钮
+		var $username = $("#changeUsername");	// 获取对话框中修改后的用户名
+		var $password = $("#changePassword");	// 获取对话框中修改后的密码
+		var $pwdNote = $(".pwd_note");			// 获取对话框中密码的提示框
+		var $userNote = $(".user_note")			// 获取对话框中用户名的提示框
+		var username;							// 定义用户名
+		var password;							// 定义密码
+		var oldUsername;						// 定义修改前的用户名
+		var userflag = true;					// 用户名合理标志
+		var pwdflag = true;						// 密码合理标志
+		var current;							// 定义暂存的修改对象
+		var $form = $(".form");					// 获取内容
+		var $userList = $(".userList");			// 获取用户列表
+		var userlist = new Array();				// 定义用户列表存放后台发送的用户列表信息
+		var $userPagerUl = $("#userPageUl");	// 获取用户分页栏
+
+		var userInfo = {			// 用户名信息
+			"userflag":userflag,	// 用户名合理标记
+			"$username":$username,	// jQuery用户名对象
+			"$userNote":$userNote,	// jQuery用户名信息提示对象
+			"username":username,	// 用户名内容
+			"flag": "change"		// 操作标志
+		}
+		
+		// 用户名输入检查
+		$username.keyup(userInfo, checkUserName);
+
+		var pwdInfo = {				// 密码信息
+			"pwdflag": pwdflag,		// 密码合理标记
+			"$password": $password,	// jQuery密码对象
+			"$pwdNote": $pwdNote,	// jQuery密码信息提示对象
+			"password": password,	// 密码内容
+			"flag": "change"		// 操作标志
+		}
+		
+		// 分页信息配置
+		var config = {
+			"preCount": 3,		// 单页数目
+		}
+
+		// 密码输入检查
+		$password.keyup(pwdInfo, checkPassword);
+		
+		// 首次加载时get请求获取用户列表
+		function getUserList() {
+			$.ajax({
+				type: 'get',
+				url: "get-user-list",
+				data: '',
+				dataType: "JSON",
+				beforeSend() {
+					$userList.html("<h1>获取用户中...</h1>");
+					$userPagerUl.css({display: "none"});
+				},
+				success(response) {
+					let data = response.msg;
+					if(data == '0') {
+						$userList.html("<h1>暂无用户</h1>");
+						$userPagerUl.css({display: "none"});
+					} else {
+						$userPagerUl.css({display: "block"});
+						for(let i = 0; i < data.length; i ++) {
+							userlist.push(createCard(data[i].userimage, data[i].username, data[i].password));
+						}
+						// 修改用户分页信息
+						$userPagerUl.data('zui.pager').set({
+							page: 1,
+							recTotal: userlist.length,
+							recPerPage: config.preCount
+						});
+						// $userPagerUl
+						appendCard(1, config.preCount);
+					}
+				}
+			})
+		}
+		getUserList();
+		
+		// 创建用户卡片并封装为jQuery对象
+		function createCard(image, user, pwd) {
+			return $(`
+				<div class="card" style="padding: 10px;">
+					<img src="${image}" alt="" class="img-rounded userhead">
+					<p class="userinfo user">用户名: <span>${user}</span></p>
+					<p class="userinfo pwd">密码: <span>${pwd}</span></p>
+					<button class="btn btn-primary edit" type="button" style="width: 80px; margin: 0; float: left;" onclick="edit(this.parentNode)">编辑</button>					
+					<button class="btn btn-danger delete" type="button" style="width: 80px; margin: 0 0 0 20px; float: left;" onclick="Delete(this.parentNode)">删除</button>
+				</div>
+			`);
+		}
+		
+		// 向用户列表中添加用户卡片
+		function appendCard(start, end) {
+			$userList.html('');
+			for(let i = start-1; i < end; i ++) {
+				$userList.append(userlist[i]);
+			}
+		}
+
+		// 切换用户展示页
+		$userPagerUl.on('onPageChange', function(e, state, oldState) {
+			appendCard(state.start, state.end);
+		});
+		
+		// 点击编辑用户信息
+		function edit(obj) {
+			let $obj = $(obj);	// 封装DOM为jQuery对象
+			clearNote();		// 清除所有的提示信息
+			userInfo.username = $obj.find(".user span").text();
+			pwdInfo.password = $obj.find(".pwd span").text();
+			oldUsername = userInfo.username;
+			current = $obj;		// 存放当前获取的对象
+			$username.val(userInfo.username);
+			$password.val(pwdInfo.password);
+			$mask.find(".mask-title").text("修改信息");
+			$Sdelete.css({display: 'none'});
+			$modify.css({display: 'block'});
+			$mask.find(".mask-body").css({display: 'block'});
+			$mask.fadeIn("normal").find(".mask-content").css({height: '280px'}).animate({
+				bottom: 0
+			});
+		}
+
+		// 点击删除用户信息
+		function Delete(obj) {
+			let $obj = $(obj);	// 封装DOM为jQuery对象
+			clearNote();		// 清除所有提示信息
+			userInfo.username = $obj.find(".user span").text();
+			pwdInfo.password = $obj.find(".pwd span").text();
+			current = $obj;		// 存放当前对象
+			$mask.find(".mask-title").text("删除用户");
+			$mask.find(".mask-body").css({display: 'none'});
+			$modify.css({display: 'none'});
+			$Sdelete.css({display: 'block'});
+			$mask.fadeIn("normal").find(".mask-content").css({height: '120px'}).animate({
+				bottom: 0
+			});
+		}
+		
+		// (对话框中)点击修改用户信息
+		$modify.click(()=> {
+			// 点击修改时判断重新输入的用户名和密码是否合理
+			if(userInfo.userflag && pwdInfo.pwdflag) {
+				// 用户名和密码均合理进行post请求修改
+				$.ajax({
+					type: 'post',
+					url: "modify-user",
+					data: {"username":userInfo.username, "oldUsername":oldUsername, "password":pwdInfo.password},
+					dataType: "JSON",
+					beforeSend() {
+						$(".change-note").css({color: "yellow"}).text('用户信息修改中...');
+					},
+					success(response) {
+						if(response.msg == "1") {
+							// 返回数据为1, 表示修改成功
+							$(".change-note").css({color: "#CC6600"}).text('用户信息修改成功');
+							current.find('.user span').text(userInfo.username);
+							current.find('.pwd span').text(pwdInfo.password);
+							clearNote();
+							closeMask();
+						} else {
+							// 返回数据不为1表示数据失败(并发操作)
+							$(".change-note").css({color: "#FF6666"}).text('用户信息修改失败');
+						}
+					}
+				})
+			}
+		})
+		
+		// (对话框中)点击删除用户信息
+		$Sdelete.click(()=> {
+			// 进行post请求修改
+			$.ajax({
+				type: 'post',
+				url: "delete-user",
+				data: {"username":userInfo.username},
+				dataType: "JSON",
+				beforeSend() {
+					$(".change-note").css({color: "yellow"}).text('用户信息删除中...');
+				},
+				success(response) {
+					if(response.msg == "1") {
+						// 返回数据为1, 表示用户信息已被删除
+						current.remove();	// 在页面上移除当前对象
+						clearNote();
+						userlist.length --;
+						$mask.fadeOut("normal").find(".mask-content").animate({
+							bottom: "160px"
+						});
+						$userPagerUl.data('zui.pager').set({
+							recTotal: userlist.length
+						});
+						// 移除用户信息后判断是否还有用户
+						if(userlist.length == 0) {
+							$userList.html("<h1>暂无用户</h1>");
+							$userPagerUl.css({display: "none"});
+						}
+					} else {
+						// 返回数据不为1表示数据失败(并发操作)
+						$(".change-note").css({color: "yellow"}).text('删除失败, 用户可能已被删除, 请刷新页面...');
+					}
+				}
+			})
+		})
+
+		// 点击关闭按钮关闭对话框
+		$close.click(closeMask)
+		
+		// 点击取消按钮关闭对话框
+		$cancel.click(closeMask)
+		
+		// 关闭遮罩层
+		function closeMask() {
+			$mask.fadeOut("normal").find(".mask-content").animate({
+				bottom: "160px"
+			});
+		}
+		
+		// 清除提示信息
+		function clearNote() {
+			$(".note").text('');
+		}
+
+	</script>
+</html>
